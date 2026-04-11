@@ -38,7 +38,7 @@
         .hidden { display: none !important; }
         input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid var(--card-border); background: var(--c); color: var(--t); box-sizing: border-box; }
 
-        /* ستايل الشات المدمج */
+        /* ستايل واجهة الشات */
         #chat-interface { padding: 20px 5%; max-width: 800px; margin: auto; }
         #chat-window { height: 400px; overflow-y: auto; background: var(--c); border-radius: 20px; padding: 20px; border: 1px solid var(--card-border); margin-bottom: 20px; }
         .bubble { padding: 12px 18px; border-radius: 15px; margin-bottom: 10px; line-height: 1.6; max-width: 85%; position: relative; }
@@ -47,7 +47,6 @@
         .speak-btn { background: none; border: none; color: var(--p); cursor: pointer; font-size: 12px; margin-top: 10px; display: block; }
         .loader { font-size: 12px; color: var(--p); margin-bottom: 10px; display: none; }
         
-        /* لتنسيق القوائم داخل رد الذكاء الاصطناعي */
         .ai-bubble ul, .ai-bubble ol { padding-right: 20px; margin: 10px 0; }
         .ai-bubble pre { background: #000; padding: 10px; border-radius: 10px; overflow-x: auto; direction: ltr; }
     </style>
@@ -57,13 +56,13 @@
 
     <div id="acc-popup" class="fake-popup">
         <h3 id="pop-title" style="text-align:center; margin-bottom:15px;">Choose an account</h3>
-        <div class="acc-item" onclick="login('retagkhaled067@gmail.com')">
+        <div class="acc-item" onclick="login('Retag Khaled')">
             <div style="width:40px; height:40px; background:var(--p); color:#fff; border-radius:50%; display:grid; place-items:center; font-weight:bold;">R</div>
             <div><div style="font-size:14px; font-weight:bold;">Retag Khaled</div><div style="font-size:11px; opacity:0.7;">retagkhaled067@gmail.com</div></div>
         </div>
-        <div class="acc-item" onclick="login('retagkhaled960@gmail.com')">
-            <div style="width:40px; height:40px; background:#666; color:#fff; border-radius:50%; display:grid; place-items:center; font-weight:bold;">R</div>
-            <div><div style="font-size:14px; font-weight:bold;">Retag Khaled</div><div style="font-size:11px; opacity:0.7;">retagkhaled960@gmail.com</div></div>
+        <div class="acc-item" onclick="login('Guest User')">
+            <div style="width:40px; height:40px; background:#666; color:#fff; border-radius:50%; display:grid; place-items:center; font-weight:bold;">G</div>
+            <div><div style="font-size:14px; font-weight:bold;">Guest User</div><div style="font-size:11px; opacity:0.7;">guest@example.com</div></div>
         </div>
         <button onclick="closePopup('acc-popup')" style="width:100%; background:none; border:none; color:var(--a); margin-top:15px; cursor:pointer; font-weight:bold;">Cancel</button>
     </div>
@@ -94,13 +93,14 @@
             <button onclick="openPopup('acc-popup')" style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--card-border); background:#fff; color:#333; font-weight:bold; cursor:pointer; margin-bottom:12px; display:flex; align-items:center; justify-content:center; gap:10px;">
                 <i class="fab fa-google" style="color:#db4437"></i> Sign in with Google
             </button>
+            <input type="text" id="manual-name" placeholder="ادخلي اسمك هنا" style="margin-bottom: 5px;">
             <input type="password" placeholder="كلمة المرور" id="pass-field">
             <button onclick="login('manual')" style="width:100%; padding:12px; background:var(--p); color:#fff; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">دخول</button>
         </div>
     </div>
 
     <div id="main-dash" class="hidden">
-        <h2 id="user-hi" style="padding: 30px 5% 0;">هاي ريتاج 👋</h2>
+        <h2 id="user-hi" style="padding: 30px 5% 0;">هاي 👋</h2>
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:25px; padding:25px 5%;">
             <div class="card" onclick="openChat()"><i class="fas fa-comment-dots"></i><h3 id="c1-t">Retag Chat AI</h3><p id="c1-d">شات ذكي متطور</p></div>
             <div class="card" onclick="alert('قريباً!')"><i class="fas fa-code"></i><h3 id="c2-t">Code Fixer</h3><p id="c2-d">اكتشف الأخطاء برمجياً</p></div>
@@ -112,7 +112,7 @@
         <div id="chat-interface">
             <button onclick="backToDash()" style="background:none; border:none; color:var(--p); cursor:pointer; margin-bottom:10px;"><i class="fas fa-arrow-right"></i> العودة للوحة التحكم</button>
             <div id="chat-window"></div>
-            <div id="loader" class="loader"><i class="fas fa-spinner fa-spin"></i> ريتاج بيفكر...</div>
+            <div id="loader" class="loader"><i class="fas fa-spinner fa-spin"></i> جاري التفكير...</div>
             <div style="display:flex; gap:10px;">
                 <input type="text" id="user-input" placeholder="اكتبي سؤالك هنا..." onkeypress="if(event.key==='Enter') sendMessage()">
                 <button onclick="sendMessage()" style="background:var(--p); border:none; color:#fff; padding:0 20px; border-radius:10px; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
@@ -140,7 +140,18 @@
         function closePopup(id) { document.getElementById(id).style.display = 'none'; }
         function setTheme(t) { document.getElementById('html-tag').setAttribute('data-theme', t); localStorage.setItem('theme', t); }
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
-        function login(type) { localStorage.setItem('isAuth', 'true'); location.reload(); }
+        
+        // وظيفة تسجيل الدخول مع حفظ الاسم المخصص
+        function login(user) {
+            let nameToSave = user;
+            if(user === 'manual') {
+                const manualName = document.getElementById('manual-name').value.trim();
+                nameToSave = manualName ? manualName : "مستخدم";
+            }
+            localStorage.setItem('isAuth', 'true');
+            localStorage.setItem('userName', nameToSave); // حفظ اسم المستخدم
+            location.reload();
+        }
         
         function openChat() {
             document.getElementById('main-dash').classList.add('hidden');
@@ -180,13 +191,9 @@
                 });
                 const data = await res.json();
                 loader.style.display = "none";
-
                 const aiMsg = data.candidates[0].content.parts[0].text;
                 const msgId = 'msg-' + Date.now();
-                
-                // تنسيق الرد عشان ميبقاش جنب بعضه
                 const htmlMsg = marked.parse(aiMsg);
-
                 win.innerHTML += `
                     <div class="bubble ai-bubble">
                         <div id="${msgId}">${htmlMsg}</div>
@@ -212,6 +219,11 @@
             if(localStorage.getItem('isAuth')) {
                 document.getElementById('login-page').classList.add('hidden');
                 document.getElementById('main-dash').classList.remove('hidden');
+                
+                // هنا بنجيب اسم المستخدم المحفوظ ونعرضه
+                const currentUserName = localStorage.getItem('userName') || "مستخدم";
+                const d = dict[l] || dict['ar'];
+                document.getElementById('user-hi').innerText = `${d.hi} ${currentUserName} 👋`;
             }
         };
     </script>
