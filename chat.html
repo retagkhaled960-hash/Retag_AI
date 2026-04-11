@@ -18,21 +18,20 @@
         .user-bubble { background: #d4a373; color: black; }
         .ai-bubble { background: #2c2c2e; border: 1px solid #3d3d3f; }
 
-        /* رفعنا منطقة الكتابة وعملنا مسافة كبيرة تحتها عشان تبعد عن أزرار الموبايل */
         .input-area { 
             position: fixed;
-            bottom: 40px; /* رفعناه فوق شوية عن الأرضية */
+            bottom: 40px; 
             left: 5%;
             right: 5%;
             z-index: 100;
         }
         .input-box { 
-            background: #ffffff; /* لون أبيض عشان يبان جداً */
+            background: #ffffff; 
             border-radius: 15px; 
             padding: 10px 15px; 
             display: flex; 
             align-items: center; 
-            border: 3px solid #d4a373; /* برواز ذهبي واضح */
+            border: 3px solid #d4a373; 
             box-shadow: 0 5px 20px rgba(0,0,0,0.6);
         }
         input { flex: 1; background: transparent; border: none; color: #000; outline: none; font-size: 16px; font-weight: bold; }
@@ -53,26 +52,54 @@
             <button onclick="send()">إرسال</button>
         </div>
     </div>
+
     <script>
         async function send() {
             const inp = document.getElementById('user-input');
             const win = document.getElementById('chat-window');
+            
+            // التأكد من وجود الـ API Key محفوظ في المتصفح
+            let myKey = localStorage.getItem('my_gemini_key');
+            
+            if (!myKey) {
+                myKey = prompt("من فضلك ادخلي الـ API Key الخاص بكِ (سيتم حفظه في متصفحك فقط ولن يظهر على GitHub):");
+                if (myKey && myKey.trim().length > 10) {
+                    localStorage.setItem('my_gemini_key', myKey.trim());
+                } else {
+                    alert("لازم تحطي Key صحيح عشان الموقع يشتغل!");
+                    return;
+                }
+            }
+
             if(!inp.value.trim()) return;
             const text = inp.value;
+            
+            // إظهار رسالة المستخدم
             win.innerHTML += `<div class="msg-row user-row"><div class="bubble user-bubble">${text}</div></div>`;
             inp.value = "";
             win.scrollTop = win.scrollHeight;
+
             try {
-                // استخدام Key مختلف تماماً لمحاولة حل مشكلة الـ Error
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=AIzaSyD` + `Z4R3e` + `M1o5W` + `8-q2` + `V7t` + `L6P` + `X9R` + `m3u` + `Y1z2` + `X8C`, {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${myKey}`, {
                     method: "POST",
                     headers: {"Content-Type": "application/json"},
                     body: JSON.stringify({contents: [{parts: [{text: text}]}]})
                 });
+                
                 const data = await res.json();
-                win.innerHTML += `<div class="msg-row ai-row"><div class="bubble ai-bubble">${data.candidates[0].content.parts[0].text}</div></div>`;
+
+                if (data.error) {
+                    // لو الـ Key غلط، بنمسحه عشان يطلب واحد جديد
+                    localStorage.removeItem('my_gemini_key');
+                    throw new Error(data.error.message);
+                }
+
+                const aiResponse = data.candidates[0].content.parts[0].text;
+                win.innerHTML += `<div class="msg-row ai-row"><div class="bubble ai-bubble">${aiResponse}</div></div>`;
+                
             } catch(e) {
-                win.innerHTML += `<div class="msg-row ai-row"><div class="bubble ai-bubble" style="color:red">Connection Busy. Please try again in a moment.</div></div>`;
+                win.innerHTML += `<div class="msg-row ai-row"><div class="bubble ai-bubble" style="color:red">حصل خطأ. تأكدي من الـ Key وجربي تاني.</div></div>`;
+                console.error("Error details:", e);
             }
             win.scrollTop = win.scrollHeight;
         }
