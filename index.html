@@ -6,21 +6,14 @@
     <title>Retag AI | Ultimate Version</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    
     <style>
         :root { --p: #9966cc; --a: #ff4444; --bg: #050505; --t: #fff; --c: rgba(255,255,255,0.08); --card-border: rgba(255,255,255,0.05); }
-        /* تنسيق الأيقونات عشان تليق مع البيج */
-[data-theme="light"] .card i {
-    color: #bc8e5c; /* درجة بيج أغمق شوية للأيقونات */
-    filter: drop-shadow(0 2px 4px rgba(212, 163, 115, 0.3)); /* ظل ناعم */
-}
+        [data-theme="light"] .card i { color: #bc8e5c; filter: drop-shadow(0 2px 4px rgba(212, 163, 115, 0.3)); }
+        [data-theme="light"] .card:hover { background-color: #fff9f0; border-color: #d4a373; }
+        [data-theme="light"] { --bg: #fdfaf5; --t: #4a3f35; --c: #ffffff; --p: #d4a373; --card-border: rgba(212, 163, 115, 0.2); }
 
-[data-theme="light"] .card:hover {
-    background-color: #fff9f0; /* تغيير خفيف عند الوقوف بالماوس */
-    border-color: #d4a373;
-}
- [data-theme="light"] { --bg: #fdfaf5; --t: #4a3f35; --c: #ffffff; --p: #d4a373; --card-border: rgba(212, 163, 115, 0.2); }
-
-        
         body { margin: 0; background: var(--bg); color: var(--t); font-family: 'Cairo', sans-serif; transition: 0.4s; overflow-x: hidden; }
         .stars-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.5; background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 5 L53 15 L63 15 L55 22 L58 32 L50 25 L42 32 L45 22 L37 15 L47 15 Z' fill='%239966cc' fill-opacity='0.1'/%3E%3C/svg%3E"); }
         [data-theme="light"] .stars-bg { display: none; }
@@ -38,13 +31,25 @@
 
         .btn-theme { background: var(--c); color: var(--t); border: 1px solid var(--p); padding: 10px; border-radius: 12px; cursor: pointer; width: 100%; margin: 10px 0; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: bold; }
         
-        /* نافذة محاكاة جوجل */
         .fake-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 320px; background: var(--bg); border: 1px solid var(--p); border-radius: 20px; padding: 25px; z-index: 9000; display: none; box-shadow: 0 0 100px rgba(0,0,0,0.5); }
         .acc-item { display: flex; align-items: center; gap: 15px; padding: 12px; cursor: pointer; border-radius: 12px; transition: 0.2s; margin-top: 10px; border: 1px solid transparent; }
         .acc-item:hover { background: var(--c); border-color: var(--p); }
         
         .hidden { display: none !important; }
         input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid var(--card-border); background: var(--c); color: var(--t); box-sizing: border-box; }
+
+        /* ستايل الشات المدمج */
+        #chat-interface { padding: 20px 5%; max-width: 800px; margin: auto; }
+        #chat-window { height: 400px; overflow-y: auto; background: var(--c); border-radius: 20px; padding: 20px; border: 1px solid var(--card-border); margin-bottom: 20px; }
+        .bubble { padding: 12px 18px; border-radius: 15px; margin-bottom: 10px; line-height: 1.6; max-width: 85%; position: relative; }
+        .user-bubble { background: var(--p); color: #fff; margin-left: auto; border-bottom-right-radius: 2px; }
+        .ai-bubble { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); margin-right: auto; border-bottom-left-radius: 2px; }
+        .speak-btn { background: none; border: none; color: var(--p); cursor: pointer; font-size: 12px; margin-top: 10px; display: block; }
+        .loader { font-size: 12px; color: var(--p); margin-bottom: 10px; display: none; }
+        
+        /* لتنسيق القوائم داخل رد الذكاء الاصطناعي */
+        .ai-bubble ul, .ai-bubble ol { padding-right: 20px; margin: 10px 0; }
+        .ai-bubble pre { background: #000; padding: 10px; border-radius: 10px; overflow-x: auto; direction: ltr; }
     </style>
 </head>
 <body>
@@ -65,59 +70,53 @@
 
     <div id="forget-popup" class="fake-popup">
         <h3 style="text-align:center;">إعادة تعيين كلمة السر</h3>
-        <p style="font-size:12px; opacity:0.8; text-align:center;">أدخل بريدك الإلكتروني وسنرسل لك رمز التحقق</p>
         <input type="email" placeholder="email@example.com">
         <button onclick="alert('تم إرسال الكود!'); closePopup('forget-popup')" style="width:100%; padding:12px; background:var(--p); color:#fff; border:none; border-radius:10px; cursor:pointer; font-weight:bold;">إرسال</button>
         <button onclick="closePopup('forget-popup')" style="width:100%; background:none; border:none; color:var(--a); margin-top:10px; cursor:pointer;">إلغاء</button>
     </div>
-<div id="demo-popup" class="fake-popup">
-    <h3 style="text-align:center; margin-bottom:15px;">طلب عرض توضيحي</h3>
-    <p style="font-size:12px; opacity:0.8; text-align:center; margin-bottom:15px;">سنتواصل معك لترتيب عرض حي لـ Retag AI</p>
-    <input type="text" placeholder="الاسم بالكامل" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid var(--p); background: var(--c); color: var(--t);">
-    <input type="email" placeholder="البريد الإلكتروني أو رقم الهاتف" style="width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid var(--p); background: var(--c); color: var(--t);">
-    <button onclick="alert('تم استلام طلبك! سنتواصل معك قريباً.'); closePopup('demo-popup')" style="width:100%; padding:12px; background:var(--p); color:#fff; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">إرسال الطلب</button>
-    <button onclick="closePopup('demo-popup')" style="width:100%; background:none; border:none; color:var(--t); margin-top:10px; cursor:pointer;">إلغاء</button>
-</div>
 
     <nav>
         <div class="logo">RETAG <i class="fas fa-bolt"></i> AI</div>
         <i class="fas fa-bars" onclick="toggleMenu()" style="cursor:pointer; font-size:26px;"></i>
     </nav>
-<div id="hero-section" style="padding: 80px 5%; text-align: center; background: linear-gradient(135deg, rgba(212, 163, 115, 0.1), transparent); margin-bottom: 40px;">
-    <h1 style="font-family: 'Orbitron'; font-size: 2.5rem; margin-bottom: 20px; line-height: 1.2; color: var(--t);">
-        Intelligent AI Agents <br> <span style="color: var(--p);">Built for Retag</span>
-    </h1>
-    <p style="max-width: 600px; margin: 0 auto 30px; opacity: 0.8; font-size: 1rem; line-height: 1.6; color: var(--t);">
-        نحن نبتكر وكلاء ذكاء اصطناعي يتفاعلون، يتعلمون، ويطورون أعمالك. تجربة سلسة مع محادثات طبيعية واستجابة فورية.
-    </p>
-    <div style="display: flex; justify-content: center; gap: 15px;">
-        <button onclick="document.getElementById('login-page').scrollIntoView()" style="padding: 12px 30px; border-radius: 50px; border: none; background: var(--p); color: #fff; font-weight: bold; cursor: pointer;">Get Started</button>
-        <button onclick="openPopup('demo-popup')" style="padding: 12px 30px; border-radius: 50px; border: 1px solid var(--p); background: transparent; color: var(--t); font-weight: bold; cursor: pointer;">Request a Demo</button>
 
+    <div id="hero-section" style="padding: 80px 5%; text-align: center;">
+        <h1 style="font-family: 'Orbitron'; font-size: 2.5rem; margin-bottom: 20px;">Intelligent AI Agents <br> <span style="color: var(--p);">Built for Retag</span></h1>
+        <p style="max-width: 600px; margin: 0 auto 30px; opacity: 0.8;">نحن نبتكر وكلاء ذكاء اصطناعي يتفاعلون، يتعلمون، ويطورون أعمالك.</p>
+        <div style="display: flex; justify-content: center; gap: 15px;">
+            <button onclick="document.getElementById('login-page').scrollIntoView()" style="padding: 12px 30px; border-radius: 50px; border: none; background: var(--p); color: #fff; font-weight: bold; cursor: pointer;">Get Started</button>
+        </div>
     </div>
-</div>
 
     <div id="login-page" style="padding: 80px 5%; text-align: center;">
         <div style="max-width:400px; margin:auto; background:var(--c); padding:35px; border-radius:30px; border:1px solid var(--card-border);">
-            <h2 id="txt-log-h" style="margin-bottom:25px;">مرحباً بكِ مجدداً</h2>
-        <button onclick="openPopup('acc-popup')" style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--card-border); background:#fff; color:#333; font-weight:bold; cursor:pointer; margin-bottom:12px; display:flex; align-items:center; justify-content:center; gap:10px;">
-    <i class="fab fa-google" style="color:#db4437"></i> Sign in with Google
-</button>
-            
-            <p style="margin:25px 0 10px; font-size:13px; opacity:0.6;">أو الدخول اليدوي</p>
+            <h2 id="txt-log-h">مرحباً بكِ مجدداً</h2>
+            <button onclick="openPopup('acc-popup')" style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--card-border); background:#fff; color:#333; font-weight:bold; cursor:pointer; margin-bottom:12px; display:flex; align-items:center; justify-content:center; gap:10px;">
+                <i class="fab fa-google" style="color:#db4437"></i> Sign in with Google
+            </button>
             <input type="password" placeholder="كلمة المرور" id="pass-field">
-            <button onclick="login('manual')" style="width:100%; padding:12px; background:var(--p); color:#fff; border:none; border-radius:10px; font-weight:bold; cursor:pointer; margin-bottom:10px;">دخول</button>
-            
-            <p onclick="openPopup('forget-popup')" style="color:var(--p); font-size:13px; cursor:pointer; text-decoration:underline;">نسيت كلمة السر؟</p>
+            <button onclick="login('manual')" style="width:100%; padding:12px; background:var(--p); color:#fff; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">دخول</button>
         </div>
     </div>
 
     <div id="main-dash" class="hidden">
         <h2 id="user-hi" style="padding: 30px 5% 0;">هاي ريتاج 👋</h2>
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:25px; padding:25px 5%;">
-            <div class="card"><i class="fas fa-comment-dots"></i><h3 id="c1-t">Retag Chat AI</h3><p id="c1-d">شات ذكي متطور</p></div>
-            <div class="card"><i class="fas fa-code"></i><h3 id="c2-t">Code Fixer</h3><p id="c2-d">اكتشف الأخطاء برمجياً</p></div>
-            <div class="card"><i class="fas fa-magic"></i><h3 id="c3-t">Image Gen</h3><p id="c3-d">توليد صور بالذكاء الاصطناعي</p></div>
+            <div class="card" onclick="openChat()"><i class="fas fa-comment-dots"></i><h3 id="c1-t">Retag Chat AI</h3><p id="c1-d">شات ذكي متطور</p></div>
+            <div class="card" onclick="alert('قريباً!')"><i class="fas fa-code"></i><h3 id="c2-t">Code Fixer</h3><p id="c2-d">اكتشف الأخطاء برمجياً</p></div>
+            <div class="card" onclick="alert('قريباً!')"><i class="fas fa-magic"></i><h3 id="c3-t">Image Gen</h3><p id="c3-d">توليد صور بالذكاء الاصطناعي</p></div>
+        </div>
+    </div>
+
+    <div id="chat-section" class="hidden" style="padding-bottom: 50px;">
+        <div id="chat-interface">
+            <button onclick="backToDash()" style="background:none; border:none; color:var(--p); cursor:pointer; margin-bottom:10px;"><i class="fas fa-arrow-right"></i> العودة للوحة التحكم</button>
+            <div id="chat-window"></div>
+            <div id="loader" class="loader"><i class="fas fa-spinner fa-spin"></i> ريتاج بيفكر...</div>
+            <div style="display:flex; gap:10px;">
+                <input type="text" id="user-input" placeholder="اكتبي سؤالك هنا..." onkeypress="if(event.key==='Enter') sendMessage()">
+                <button onclick="sendMessage()" style="background:var(--p); border:none; color:#fff; padding:0 20px; border-radius:10px; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
+            </div>
         </div>
     </div>
 
@@ -126,55 +125,93 @@
             <h2 id="txt-sets" style="margin:0;">الإعدادات</h2>
             <i class="fas fa-times" onclick="toggleMenu()" style="color:var(--a); font-size:26px; cursor:pointer;"></i>
         </div>
-        
-        <p style="font-size:14px; margin-bottom:5px;">مظهر الموقع:</p>
         <button class="btn-theme" onclick="setTheme('light')"><i class="fas fa-sun"></i> Light Mode</button>
         <button class="btn-theme" onclick="setTheme('dark')"><i class="fas fa-moon"></i> Dark Mode</button>
-
-        <p style="font-size:14px; margin:20px 0 5px;">اللغة:</p>
-        <select onchange="changeLang(this.value)" id="lang-select" style="width:100%; padding:12px; background:var(--c); color:var(--t); border-radius:10px; border:1px solid var(--p);">
-            <option value="ar">العربية 🇪🇬</option><option value="en">English 🇺🇸</option><option value="fr">Français 🇫🇷</option>
-        </select>
-
-        <button onclick="localStorage.clear(); location.reload();" style="background:var(--a); color:#fff; border:none; padding:14px; width:100%; margin-top:50px; border-radius:12px; cursor:pointer; font-weight:bold;"><i class="fas fa-sign-out-alt"></i> تسجيل الخروج</button>
+        <button onclick="localStorage.clear(); location.reload();" style="background:var(--a); color:#fff; border:none; padding:14px; width:100%; margin-top:50px; border-radius:12px; cursor:pointer; font-weight:bold;">تسجيل الخروج</button>
     </div>
 
     <script>
         const dict = {
             ar: { hi:"هاي", sets:"الإعدادات", logH:"مرحباً بكِ مجدداً", c1t:"Retag Chat AI", c1d:"شات ذكي متطور", c2t:"Code Fixer", c2d:"اكتشف الأخطاء برمجياً", c3t:"Image Generator", c3d:"توليد صور خيالية" },
-            en: { hi:"Hi", sets:"Settings", logH:"Welcome Back", c1t:"Retag Chat AI", c1d:"Advanced AI Chat", c2t:"Code Fixer", c2d:"Fix bugs instantly", c3t:"Image Generator", c3d:"Generate AI Art" },
-            fr: { hi:"Salut", sets:"Paramètres", logH:"Bienvenue", c1t:"Retag Chat AI", c1d:"Chat IA avancé", c2t:"Réparateur de code", c2d:"Détecter les erreurs", c3t:"Image Generator", c3d:"Générer de l'art IA" }
+            en: { hi:"Hi", sets:"Settings", logH:"Welcome Back", c1t:"Retag Chat AI", c1d:"Advanced AI Chat", c2t:"Code Fixer", c2d:"Fix bugs instantly", c3t:"Image Generator", c3d:"Generate AI Art" }
         };
 
-        function openPopup(id) { 
-    document.getElementById('pop-title').innerText = "Choose an account";
-    document.getElementById(id).style.display = 'block'; 
-}
+        function openPopup(id) { document.getElementById(id).style.display = 'block'; }
         function closePopup(id) { document.getElementById(id).style.display = 'none'; }
-        
         function setTheme(t) { document.getElementById('html-tag').setAttribute('data-theme', t); localStorage.setItem('theme', t); }
-        
-        function login(type) { localStorage.setItem('isAuth', 'true'); localStorage.setItem('user', 'ريتاج'); location.reload(); }
-        
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
-        function changeLang(l) { localStorage.setItem('lang', l); location.reload(); }
+        function login(type) { localStorage.setItem('isAuth', 'true'); location.reload(); }
+        
+        function openChat() {
+            document.getElementById('main-dash').classList.add('hidden');
+            document.getElementById('chat-section').classList.remove('hidden');
+            document.getElementById('hero-section').classList.add('hidden');
+        }
+
+        function backToDash() {
+            document.getElementById('chat-section').classList.add('hidden');
+            document.getElementById('main-dash').classList.remove('hidden');
+        }
+
+        async function sendMessage() {
+            const inp = document.getElementById('user-input');
+            const win = document.getElementById('chat-window');
+            const loader = document.getElementById('loader');
+            const text = inp.value.trim();
+            if(!text) return;
+
+            let myKey = localStorage.getItem('my_gemini_key');
+            if(!myKey) {
+                myKey = prompt("من فضلك ادخلي الـ API Key الخاص بكِ:");
+                if(myKey) localStorage.setItem('my_gemini_key', myKey);
+                else return;
+            }
+
+            win.innerHTML += `<div class="bubble user-bubble">${text}</div>`;
+            inp.value = "";
+            loader.style.display = "block";
+            win.scrollTop = win.scrollHeight;
+
+            try {
+                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${myKey}`, {
+                    method: "POST",
+                    headers: {"Content-Type": "application/json"},
+                    body: JSON.stringify({contents: [{parts: [{text: text}]}]})
+                });
+                const data = await res.json();
+                loader.style.display = "none";
+
+                const aiMsg = data.candidates[0].content.parts[0].text;
+                const msgId = 'msg-' + Date.now();
+                
+                // تنسيق الرد عشان ميبقاش جنب بعضه
+                const htmlMsg = marked.parse(aiMsg);
+
+                win.innerHTML += `
+                    <div class="bubble ai-bubble">
+                        <div id="${msgId}">${htmlMsg}</div>
+                        <button class="speak-btn" onclick="speak('${msgId}')"><i class="fas fa-volume-up"></i> اسمعي الرد</button>
+                    </div>`;
+            } catch(e) {
+                loader.style.display = "none";
+                win.innerHTML += `<div class="bubble ai-bubble" style="color:red">خطأ في الاتصال، جربي تاني.</div>`;
+            }
+            win.scrollTop = win.scrollHeight;
+        }
+
+        function speak(id) {
+            const text = document.getElementById(id).innerText;
+            const ut = new SpeechSynthesisUtterance(text);
+            ut.lang = 'ar-SA';
+            window.speechSynthesis.speak(ut);
+        }
 
         window.onload = () => {
             const l = localStorage.getItem('lang') || 'ar';
-            const t = localStorage.getItem('theme') || 'dark';
-            document.getElementById('html-tag').dir = l === 'ar' ? 'rtl' : 'ltr';
-            setTheme(t);
-
+            setTheme(localStorage.getItem('theme') || 'dark');
             if(localStorage.getItem('isAuth')) {
                 document.getElementById('login-page').classList.add('hidden');
                 document.getElementById('main-dash').classList.remove('hidden');
-                const d = dict[l];
-                document.getElementById('user-hi').innerText = `${d.hi} ريتاج 👋`;
-                document.getElementById('txt-sets').innerText = d.sets;
-                document.getElementById('txt-log-h').innerText = d.logH;
-                document.getElementById('c1-t').innerText = d.c1t; document.getElementById('c1-d').innerText = d.c1d;
-                document.getElementById('c2-t').innerText = d.c2t; document.getElementById('c2-d').innerText = d.c2d;
-                document.getElementById('c3-t').innerText = d.c3t; document.getElementById('c3-d').innerText = d.c3d;
             }
         };
     </script>
