@@ -3,227 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retag AI | Ultimate Version</title>
+    <title>Retag Tools | Ultimate Version</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
-    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     
     <style>
         :root { --p: #9966cc; --a: #ff4444; --bg: #050505; --t: #fff; --c: rgba(255,255,255,0.08); --card-border: rgba(255,255,255,0.05); }
-        [data-theme="light"] .card i { color: #bc8e5c; filter: drop-shadow(0 2px 4px rgba(212, 163, 115, 0.3)); }
-        [data-theme="light"] .card:hover { background-color: #fff9f0; border-color: #d4a373; }
         [data-theme="light"] { --bg: #fdfaf5; --t: #4a3f35; --c: #ffffff; --p: #d4a373; --card-border: rgba(212, 163, 115, 0.2); }
 
         body { margin: 0; background: var(--bg); color: var(--t); font-family: 'Cairo', sans-serif; transition: 0.4s; overflow-x: hidden; }
         .stars-bg { position: fixed; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; opacity: 0.5; background-image: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M50 5 L53 15 L63 15 L55 22 L58 32 L50 25 L42 32 L45 22 L37 15 L47 15 Z' fill='%239966cc' fill-opacity='0.1'/%3E%3C/svg%3E"); }
-        [data-theme="light"] .stars-bg { display: none; }
 
         nav { padding: 15px 5%; display: flex; justify-content: space-between; align-items: center; background: rgba(0,0,0,0.1); backdrop-filter: blur(15px); border-bottom: 1px solid var(--card-border); }
         .logo { font-family: 'Orbitron'; color: var(--p); font-size: 1.5rem; font-weight: bold; }
 
-        .card { background: var(--c); padding: 40px 20px; border-radius: 25px; border: 1px solid var(--card-border); text-align: center; cursor: pointer; transition: 0.4s; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .card:hover { transform: translateY(-10px); border-color: var(--p); }
+        .card { background: var(--c); padding: 40px 20px; border-radius: 25px; border: 1px solid var(--card-border); text-align: center; cursor: pointer; transition: 0.4s; }
+        .card:hover { transform: translateY(-10px); border-color: var(--p); box-shadow: 0 0 20px rgba(153, 102, 204, 0.2); }
         .card i { font-size: 40px; color: var(--p); margin-bottom: 20px; }
 
-        .sidebar { position: fixed; top: 0; width: 300px; height: 100%; background: var(--bg); z-index: 5000; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); padding: 30px; border-inline-start: 4px solid var(--p); visibility: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.3); }
-        #html-tag[dir="rtl"] .sidebar { left: -350px; } #html-tag[dir="rtl"] .sidebar.active { left: 0; visibility: visible; }
-        #html-tag[dir="ltr"] .sidebar { right: -350px; } #html-tag[dir="ltr"] .sidebar.active { right: 0; visibility: visible; }
+        .sidebar { position: fixed; top: 0; width: 300px; height: 100%; background: var(--bg); z-index: 5000; transition: 0.5s; padding: 30px; border-inline-start: 4px solid var(--p); visibility: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
+        .sidebar.active { visibility: visible; }
+        #html-tag[dir="rtl"] .sidebar { left: -350px; } #html-tag[dir="rtl"] .sidebar.active { left: 0; }
 
         .btn-theme { background: var(--c); color: var(--t); border: 1px solid var(--p); padding: 10px; border-radius: 12px; cursor: pointer; width: 100%; margin: 10px 0; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: bold; }
-        
-        .fake-popup { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 320px; background: var(--bg); border: 1px solid var(--p); border-radius: 20px; padding: 25px; z-index: 9000; display: none; box-shadow: 0 0 100px rgba(0,0,0,0.5); }
-        .acc-item { display: flex; align-items: center; gap: 15px; padding: 12px; cursor: pointer; border-radius: 12px; transition: 0.2s; margin-top: 10px; border: 1px solid transparent; }
-        .acc-item:hover { background: var(--c); border-color: var(--p); }
-        
-        .hidden { display: none !important; }
-        input { width: 100%; padding: 12px; margin: 10px 0; border-radius: 10px; border: 1px solid var(--card-border); background: var(--c); color: var(--t); box-sizing: border-box; }
 
-        /* ستايل واجهة الشات */
-        #chat-interface { padding: 20px 5%; max-width: 800px; margin: auto; }
-        #chat-window { height: 400px; overflow-y: auto; background: var(--c); border-radius: 20px; padding: 20px; border: 1px solid var(--card-border); margin-bottom: 20px; }
-        .bubble { padding: 12px 18px; border-radius: 15px; margin-bottom: 10px; line-height: 1.6; max-width: 85%; position: relative; }
-        .user-bubble { background: var(--p); color: #fff; margin-left: auto; border-bottom-right-radius: 2px; }
-        .ai-bubble { background: rgba(255,255,255,0.05); border: 1px solid var(--card-border); margin-right: auto; border-bottom-left-radius: 2px; }
-        .speak-btn { background: none; border: none; color: var(--p); cursor: pointer; font-size: 12px; margin-top: 10px; display: block; }
-        .loader { font-size: 12px; color: var(--p); margin-bottom: 10px; display: none; }
-        
-        .ai-bubble ul, .ai-bubble ol { padding-right: 20px; margin: 10px 0; }
-        .ai-bubble pre { background: #000; padding: 10px; border-radius: 10px; overflow-x: auto; direction: ltr; }
+        .hidden { display: none !important; }
+
+        /* ستايل الآلة الحاسبة الاحترافية */
+        .calc-wrapper { max-width: 380px; margin: auto; background: var(--c); padding: 30px; border-radius: 35px; border: 1px solid var(--p); backdrop-filter: blur(10px); }
+        .calc-screen { width: 100%; height: 80px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); border-radius: 15px; margin-bottom: 25px; display: flex; align-items: center; justify-content: flex-end; padding: 0 20px; font-size: 32px; font-family: 'Orbitron'; color: var(--p); box-sizing: border-box; overflow: hidden; }
+        .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+        .calc-btn { padding: 20px; font-size: 20px; font-weight: bold; border: none; border-radius: 15px; background: var(--c); color: var(--t); cursor: pointer; transition: 0.2s; border: 1px solid var(--card-border); }
+        .calc-btn:hover { background: var(--p); color: #fff; transform: scale(1.05); }
+        .op-btn { color: var(--p); }
+        .eq-btn { background: var(--p); color: #fff; grid-column: span 2; }
     </style>
 </head>
 <body>
     <div class="stars-bg"></div>
 
-    <div id="acc-popup" class="fake-popup">
-        <h3 id="pop-title" style="text-align:center; margin-bottom:15px;">Choose an account</h3>
-        <div class="acc-item" onclick="login('Retag Khaled')">
-            <div style="width:40px; height:40px; background:var(--p); color:#fff; border-radius:50%; display:grid; place-items:center; font-weight:bold;">R</div>
-            <div><div style="font-size:14px; font-weight:bold;">Retag Khaled</div><div style="font-size:11px; opacity:0.7;">retagkhaled067@gmail.com</div></div>
-        </div>
-        <div class="acc-item" onclick="login('Guest User')">
-            <div style="width:40px; height:40px; background:#666; color:#fff; border-radius:50%; display:grid; place-items:center; font-weight:bold;">G</div>
-            <div><div style="font-size:14px; font-weight:bold;">Guest User</div><div style="font-size:11px; opacity:0.7;">guest@example.com</div></div>
-        </div>
-        <button onclick="closePopup('acc-popup')" style="width:100%; background:none; border:none; color:var(--a); margin-top:15px; cursor:pointer; font-weight:bold;">Cancel</button>
-    </div>
-
-    <div id="forget-popup" class="fake-popup">
-        <h3 style="text-align:center;">إعادة تعيين كلمة السر</h3>
-        <input type="email" placeholder="email@example.com">
-        <button onclick="alert('تم إرسال الكود!'); closePopup('forget-popup')" style="width:100%; padding:12px; background:var(--p); color:#fff; border:none; border-radius:10px; cursor:pointer; font-weight:bold;">إرسال</button>
-        <button onclick="closePopup('forget-popup')" style="width:100%; background:none; border:none; color:var(--a); margin-top:10px; cursor:pointer;">إلغاء</button>
-    </div>
-
-    <nav>
-        <div class="logo">RETAG <i class="fas fa-bolt"></i> AI</div>
-        <i class="fas fa-bars" onclick="toggleMenu()" style="cursor:pointer; font-size:26px;"></i>
-    </nav>
-
-    <div id="hero-section" style="padding: 80px 5%; text-align: center;">
-        <h1 style="font-family: 'Orbitron'; font-size: 2.5rem; margin-bottom: 20px;">Intelligent AI Agents <br> <span style="color: var(--p);">Built for Retag</span></h1>
-        <p style="max-width: 600px; margin: 0 auto 30px; opacity: 0.8;">نحن نبتكر وكلاء ذكاء اصطناعي يتفاعلون، يتعلمون، ويطورون أعمالك.</p>
-        <div style="display: flex; justify-content: center; gap: 15px;">
-            <button onclick="document.getElementById('login-page').scrollIntoView()" style="padding: 12px 30px; border-radius: 50px; border: none; background: var(--p); color: #fff; font-weight: bold; cursor: pointer;">Get Started</button>
-        </div>
-    </div>
-
-    <div id="login-page" style="padding: 80px 5%; text-align: center;">
-        <div style="max-width:400px; margin:auto; background:var(--c); padding:35px; border-radius:30px; border:1px solid var(--card-border);">
-            <h2 id="txt-log-h">مرحباً بكِ مجدداً</h2>
-            <button onclick="openPopup('acc-popup')" style="width:100%; padding:14px; border-radius:12px; border:1px solid var(--card-border); background:#fff; color:#333; font-weight:bold; cursor:pointer; margin-bottom:12px; display:flex; align-items:center; justify-content:center; gap:10px;">
-                <i class="fab fa-google" style="color:#db4437"></i> Sign in with Google
-            </button>
-            <input type="text" id="manual-name" placeholder="ادخلي اسمك هنا" style="margin-bottom: 5px;">
-            <input type="password" placeholder="كلمة المرور" id="pass-field">
-            <button onclick="login('manual')" style="width:100%; padding:12px; background:var(--p); color:#fff; border:none; border-radius:10px; font-weight:bold; cursor:pointer;">دخول</button>
+    <div id="login-page" style="padding: 100px 5%; text-align: center;">
+        <div style="max-width:400px; margin:auto; background:var(--c); padding:40px; border-radius:35px; border: 1px solid var(--card-border);">
+            <h2 style="margin-bottom: 30px;">مرحباً بكِ في عالم Retag</h2>
+            <input type="text" id="user-name-field" placeholder="ادخلي اسمك هنا" style="width:100%; padding:15px; margin-bottom:15px; border-radius:12px; border:1px solid var(--p); background:none; color:#fff; box-sizing: border-box;">
+            <button onclick="saveUser()" style="width:100%; padding:15px; background:var(--p); color:#fff; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size:16px;">دخول آمن</button>
         </div>
     </div>
 
     <div id="main-dash" class="hidden">
-        <h2 id="user-hi" style="padding: 30px 5% 0;">هاي 👋</h2>
-        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:25px; padding:25px 5%;">
-            <div class="card" onclick="openChat()"><i class="fas fa-comment-dots"></i><h3 id="c1-t">Retag Chat AI</h3><p id="c1-d">شات ذكي متطور</p></div>
-            <div class="card" onclick="alert('قريباً!')"><i class="fas fa-code"></i><h3 id="c2-t">Code Fixer</h3><p id="c2-d">اكتشف الأخطاء برمجياً</p></div>
-            <div class="card" onclick="alert('قريباً!')"><i class="fas fa-magic"></i><h3 id="c3-t">Image Gen</h3><p id="c3-d">توليد صور بالذكاء الاصطناعي</p></div>
+        <nav>
+            <div class="logo">RETAG <i class="fas fa-bolt"></i> TOOLS</div>
+            <i class="fas fa-bars" onclick="toggleMenu()" style="cursor:pointer; font-size:26px;"></i>
+        </nav>
+        <h2 id="welcome-txt" style="padding: 40px 8% 0;">هاي 👋</h2>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:25px; padding:30px 8%;">
+            <div class="card" onclick="openTool('calc')"><i class="fas fa-calculator"></i><h3>الآلة الحاسبة</h3><p>دقة وسرعة في الحساب</p></div>
+            <div class="card" onclick="alert('قريباً!')"><i class="fas fa-magic"></i><h3>أداة الصور</h3><p>تعديل احترافي قريباً</p></div>
         </div>
     </div>
 
-    <div id="chat-section" class="hidden" style="padding-bottom: 50px;">
-        <div id="chat-interface">
-            <button onclick="backToDash()" style="background:none; border:none; color:var(--p); cursor:pointer; margin-bottom:10px;"><i class="fas fa-arrow-right"></i> العودة للوحة التحكم</button>
-            <div id="chat-window"></div>
-            <div id="loader" class="loader"><i class="fas fa-spinner fa-spin"></i> جاري التفكير...</div>
-            <div style="display:flex; gap:10px;">
-                <input type="text" id="user-input" placeholder="اكتبي سؤالك هنا..." onkeypress="if(event.key==='Enter') sendMessage()">
-                <button onclick="sendMessage()" style="background:var(--p); border:none; color:#fff; padding:0 20px; border-radius:10px; cursor:pointer;"><i class="fas fa-paper-plane"></i></button>
+    <div id="calc-section" class="hidden" style="padding: 60px 5%;">
+        <div class="calc-wrapper">
+            <button onclick="closeTool()" style="background:none; border:none; color:var(--p); cursor:pointer; margin-bottom:20px; font-weight:bold;"><i class="fas fa-arrow-right"></i> العودة للرئيسية</button>
+            <div id="display" class="calc-screen">0</div>
+            <div class="calc-grid">
+                <button class="calc-btn op-btn" onclick="clearScreen()" style="color:var(--a)">C</button>
+                <button class="calc-btn op-btn" onclick="backspace()">DEL</button>
+                <button class="calc-btn op-btn" onclick="add('/')">/</button>
+                <button class="calc-btn op-btn" onclick="add('*')">×</button>
+                
+                <button class="calc-btn" onclick="add('7')">7</button>
+                <button class="calc-btn" onclick="add('8')">8</button>
+                <button class="calc-btn" onclick="add('9')">9</button>
+                <button class="calc-btn op-btn" onclick="add('-')">-</button>
+                
+                <button class="calc-btn" onclick="add('4')">4</button>
+                <button class="calc-btn" onclick="add('5')">5</button>
+                <button class="calc-btn" onclick="add('6')">6</button>
+                <button class="calc-btn op-btn" onclick="add('+')">+</button>
+                
+                <button class="calc-btn" onclick="add('1')">1</button>
+                <button class="calc-btn" onclick="add('2')">2</button>
+                <button class="calc-btn" onclick="add('3')">3</button>
+                <button class="calc-btn" onclick="add('.')">.</button>
+                
+                <button class="calc-btn" onclick="add('0')">0</button>
+                <button class="calc-btn eq-btn" onclick="calc()">=</button>
             </div>
         </div>
     </div>
 
     <div id="sidebar" class="sidebar">
-        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:30px;">
-            <h2 id="txt-sets" style="margin:0;">الإعدادات</h2>
-            <i class="fas fa-times" onclick="toggleMenu()" style="color:var(--a); font-size:26px; cursor:pointer;"></i>
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
+            <h3>الإعدادات</h3>
+            <i class="fas fa-times" onclick="toggleMenu()" style="cursor:pointer; color:var(--a)"></i>
         </div>
         <button class="btn-theme" onclick="setTheme('light')"><i class="fas fa-sun"></i> Light Mode</button>
         <button class="btn-theme" onclick="setTheme('dark')"><i class="fas fa-moon"></i> Dark Mode</button>
-        <button onclick="localStorage.clear(); location.reload();" style="background:var(--a); color:#fff; border:none; padding:14px; width:100%; margin-top:50px; border-radius:12px; cursor:pointer; font-weight:bold;">تسجيل الخروج</button>
+        <button onclick="logout()" style="width:100%; margin-top:50px; padding:15px; background:var(--a); color:#fff; border:none; border-radius:12px; cursor:pointer; font-weight:bold;">تسجيل الخروج</button>
     </div>
 
     <script>
-        const dict = {
-            ar: { hi:"هاي", sets:"الإعدادات", logH:"مرحباً بكِ مجدداً", c1t:"Retag Chat AI", c1d:"شات ذكي متطور", c2t:"Code Fixer", c2d:"اكتشف الأخطاء برمجياً", c3t:"Image Generator", c3d:"توليد صور خيالية" },
-            en: { hi:"Hi", sets:"Settings", logH:"Welcome Back", c1t:"Retag Chat AI", c1d:"Advanced AI Chat", c2t:"Code Fixer", c2d:"Fix bugs instantly", c3t:"Image Generator", c3d:"Generate AI Art" }
-        };
+        // حفظ المستخدم
+        function saveUser() {
+            const name = document.getElementById('user-name-field').value.trim();
+            if(name) {
+                localStorage.setItem('retag_name', name);
+                location.reload();
+            } else { alert("من فضلك ادخلي اسمك!"); }
+        }
 
-        function openPopup(id) { document.getElementById(id).style.display = 'block'; }
-        function closePopup(id) { document.getElementById(id).style.display = 'none'; }
-        function setTheme(t) { document.getElementById('html-tag').setAttribute('data-theme', t); localStorage.setItem('theme', t); }
+        function logout() { localStorage.clear(); location.reload(); }
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
-        
-        // وظيفة تسجيل الدخول مع حفظ الاسم المخصص
-        function login(user) {
-            let nameToSave = user;
-            if(user === 'manual') {
-                const manualName = document.getElementById('manual-name').value.trim();
-                nameToSave = manualName ? manualName : "مستخدم";
-            }
-            localStorage.setItem('isAuth', 'true');
-            localStorage.setItem('userName', nameToSave); // حفظ اسم المستخدم
-            location.reload();
-        }
-        
-        function openChat() {
+        function setTheme(t) { document.getElementById('html-tag').setAttribute('data-theme', t); localStorage.setItem('theme', t); }
+
+        function openTool(tool) {
             document.getElementById('main-dash').classList.add('hidden');
-            document.getElementById('chat-section').classList.remove('hidden');
-            document.getElementById('hero-section').classList.add('hidden');
+            if(tool === 'calc') document.getElementById('calc-section').classList.remove('hidden');
         }
 
-        function backToDash() {
-            document.getElementById('chat-section').classList.add('hidden');
+        function closeTool() {
+            document.getElementById('calc-section').classList.add('hidden');
             document.getElementById('main-dash').classList.remove('hidden');
         }
 
-        async function sendMessage() {
-            const inp = document.getElementById('user-input');
-            const win = document.getElementById('chat-window');
-            const loader = document.getElementById('loader');
-            const text = inp.value.trim();
-            if(!text) return;
+        // منطق الآلة الحاسبة
+        let currentInput = "";
+        const screen = document.getElementById('display');
 
-            let myKey = localStorage.getItem('my_gemini_key');
-            if(!myKey) {
-                myKey = prompt("من فضلك ادخلي الـ API Key الخاص بكِ:");
-                if(myKey) localStorage.setItem('my_gemini_key', myKey);
-                else return;
-            }
-
-            win.innerHTML += `<div class="bubble user-bubble">${text}</div>`;
-            inp.value = "";
-            loader.style.display = "block";
-            win.scrollTop = win.scrollHeight;
-
-            try {
-                const res = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${myKey}`, {
-                    method: "POST",
-                    headers: {"Content-Type": "application/json"},
-                    body: JSON.stringify({contents: [{parts: [{text: text}]}]})
-                });
-                const data = await res.json();
-                loader.style.display = "none";
-                const aiMsg = data.candidates[0].content.parts[0].text;
-                const msgId = 'msg-' + Date.now();
-                const htmlMsg = marked.parse(aiMsg);
-                win.innerHTML += `
-                    <div class="bubble ai-bubble">
-                        <div id="${msgId}">${htmlMsg}</div>
-                        <button class="speak-btn" onclick="speak('${msgId}')"><i class="fas fa-volume-up"></i> اسمعي الرد</button>
-                    </div>`;
-            } catch(e) {
-                loader.style.display = "none";
-                win.innerHTML += `<div class="bubble ai-bubble" style="color:red">خطأ في الاتصال، جربي تاني.</div>`;
-            }
-            win.scrollTop = win.scrollHeight;
+        function add(val) {
+            currentInput += val;
+            screen.innerText = currentInput;
         }
 
-        function speak(id) {
-            const text = document.getElementById(id).innerText;
-            const ut = new SpeechSynthesisUtterance(text);
-            ut.lang = 'ar-SA';
-            window.speechSynthesis.speak(ut);
+        function clearScreen() {
+            currentInput = "";
+            screen.innerText = "0";
+        }
+
+        function backspace() {
+            currentInput = currentInput.slice(0, -1);
+            screen.innerText = currentInput || "0";
+        }
+
+        function calc() {
+            try {
+                currentInput = eval(currentInput).toString();
+                screen.innerText = currentInput;
+            } catch {
+                alert("عملية حسابية غير صحيحة");
+                clearScreen();
+            }
         }
 
         window.onload = () => {
-            const l = localStorage.getItem('lang') || 'ar';
             setTheme(localStorage.getItem('theme') || 'dark');
-            if(localStorage.getItem('isAuth')) {
+            const user = localStorage.getItem('retag_name');
+            if(user) {
                 document.getElementById('login-page').classList.add('hidden');
                 document.getElementById('main-dash').classList.remove('hidden');
-                
-                // هنا بنجيب اسم المستخدم المحفوظ ونعرضه
-                const currentUserName = localStorage.getItem('userName') || "مستخدم";
-                const d = dict[l] || dict['ar'];
-                document.getElementById('user-hi').innerText = `${d.hi} ${currentUserName} 👋`;
+                document.getElementById('welcome-txt').innerText = `هاي ${user} 👋`;
             }
         };
     </script>
