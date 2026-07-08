@@ -44,8 +44,8 @@
 
     <div id="login-page" style="padding: 100px 5%; text-align: center;">
         <div style="max-width:400px; margin:auto; background:var(--c); padding:40px; border-radius:35px; border: 1px solid var(--card-border);">
-            <h2 style="margin-bottom: 30px;">مرحباً بك  </h2>
-            <input type="text" id="user-name-field" placeholder="ادخلي اسمك هنا" style="width:100%; padding:15px; margin-bottom:15px; border-radius:12px; border:1px solid var(--p); background:none; color:#fff; box-sizing: border-box;">
+            <h2 style="margin-bottom: 30px;"> Hello👋  </h2>
+            <input type="text" id="user-name-field" placeholder=" Please enter your name " style="width:100%; padding:15px; margin-bottom:15px; border-radius:12px; border:1px solid var(--p); background:none; color:#fff; box-sizing: border-box;">
             <button onclick="saveUser()" style="width:100%; padding:15px; background:var(--p); color:#fff; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size:16px;">دخول آمن</button>
         </div>
     </div>
@@ -55,7 +55,7 @@
             <div class="logo">RETAG <i class="fas fa-bolt"></i> TOOLS</div>
             <i class="fas fa-bars" onclick="toggleMenu()" style="cursor:pointer; font-size:26px;"></i>
         </nav>
-        <h2 id="welcome-txt" style="padding: 40px 8% 0;">هاي 👋</h2>
+        <h2 id="welcome-txt" style="padding: 40px 8% 0;"> Hi 👋</h2>
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:25px; padding:30px 8%;">
             <div class="card" onclick="openTool('calc')"><i class="fas fa-calculator"></i><h3>الآلة الحاسبة</h3><p>دقة وسرعة في الحساب</p></div>
             <div class="card" onclick="alert('قريباً!')"><i class="fas fa-magic"></i><h3>أداة الصور</h3><p>تعديل احترافي قريباً</p></div>
@@ -95,7 +95,7 @@
 
     <div id="sidebar" class="sidebar">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
-            <h3>الإعدادات</h3>
+            <h3>Settings</h3>
             <i class="fas fa-times" onclick="toggleMenu()" style="cursor:pointer; color:var(--a)"></i>
         </div>
         <button class="btn-theme" onclick="setTheme('light')"><i class="fas fa-sun"></i> Light Mode</button>
@@ -110,7 +110,7 @@
             if(name) {
                 localStorage.setItem('retag_name', name);
                 location.reload();
-            } else { alert("من فضلك ادخلي اسمك!"); }
+            } else { alert("Please enter your name!"); }
         }
 
         function logout() { localStorage.clear(); location.reload(); }
@@ -151,7 +151,7 @@
                 currentInput = eval(currentInput).toString();
                 screen.innerText = currentInput;
             } catch {
-                alert("عملية حسابية غير صحيحة");
+                alert("Math error");
                 clearScreen();
             }
         }
@@ -162,7 +162,7 @@
             if(user) {
                 document.getElementById('login-page').classList.add('hidden');
                 document.getElementById('main-dash').classList.remove('hidden');
-                document.getElementById('welcome-txt').innerText = `هاي ${user} 👋`;
+                document.getElementById('welcome-txt').innerText = `Hi ${user} 👋`;
             }
         };
     </script>
