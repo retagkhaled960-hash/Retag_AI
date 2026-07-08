@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" id="html-tag" dir="rtl" data-theme="dark">
+<html lang="en" id="html-tag" dir="ltr" data-theme="dark">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Retag Tools | Ultimate Version</title>
+    <title>Web Project | Ultimate Version</title>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&family=Cairo:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
     
@@ -23,13 +23,12 @@
 
         .sidebar { position: fixed; top: 0; width: 300px; height: 100%; background: var(--bg); z-index: 5000; transition: 0.5s; padding: 30px; border-inline-start: 4px solid var(--p); visibility: hidden; box-shadow: 0 0 50px rgba(0,0,0,0.5); }
         .sidebar.active { visibility: visible; }
+        #html-tag[dir="ltr"] .sidebar { right: -350px; } #html-tag[dir="ltr"] .sidebar.active { right: 0; }
         #html-tag[dir="rtl"] .sidebar { left: -350px; } #html-tag[dir="rtl"] .sidebar.active { left: 0; }
 
         .btn-theme { background: var(--c); color: var(--t); border: 1px solid var(--p); padding: 10px; border-radius: 12px; cursor: pointer; width: 100%; margin: 10px 0; display: flex; align-items: center; justify-content: center; gap: 10px; font-weight: bold; }
-
         .hidden { display: none !important; }
 
-        /* ستايل الآلة الحاسبة الاحترافية */
         .calc-wrapper { max-width: 380px; margin: auto; background: var(--c); padding: 30px; border-radius: 35px; border: 1px solid var(--p); backdrop-filter: blur(10px); }
         .calc-screen { width: 100%; height: 80px; background: rgba(0,0,0,0.4); border: 1px solid var(--card-border); border-radius: 15px; margin-bottom: 25px; display: flex; align-items: center; justify-content: flex-end; padding: 0 20px; font-size: 32px; font-family: 'Orbitron'; color: var(--p); box-sizing: border-box; overflow: hidden; }
         .calc-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
@@ -44,125 +43,109 @@
 
     <div id="login-page" style="padding: 100px 5%; text-align: center;">
         <div style="max-width:400px; margin:auto; background:var(--c); padding:40px; border-radius:35px; border: 1px solid var(--card-border);">
-            <h2 style="margin-bottom: 30px;"> Hello👋  </h2>
-            <input type="text" id="user-name-field" placeholder=" Please enter your name " style="width:100%; padding:15px; margin-bottom:15px; border-radius:12px; border:1px solid var(--p); background:none; color:#fff; box-sizing: border-box;">
-            <button onclick="saveUser()" style="width:100%; padding:15px; background:var(--p); color:#fff; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size:16px;">دخول آمن</button>
+            <h2 id="l-hello" style="margin-bottom: 30px;">Hello 👋</h2>
+            <input type="text" id="user-name-field" placeholder="Enter your name" style="width:100%; padding:15px; margin-bottom:15px; border-radius:12px; border:1px solid var(--p); background:none; color:var(--t); box-sizing: border-box;">
+            <button onclick="saveUser()" id="l-enter" style="width:100%; padding:15px; background:var(--p); color:#fff; border:none; border-radius:12px; font-weight:bold; cursor:pointer; font-size:16px;">Enter</button>
         </div>
     </div>
 
     <div id="main-dash" class="hidden">
         <nav>
-            <div class="logo">RETAG <i class="fas fa-bolt"></i> TOOLS</div>
+            <div class="logo">WEB PROJECT <i class="fas fa-bolt"></i></div>
             <i class="fas fa-bars" onclick="toggleMenu()" style="cursor:pointer; font-size:26px;"></i>
         </nav>
-        <h2 id="welcome-txt" style="padding: 40px 8% 0;"> Hi 👋</h2>
+        <h2 id="welcome-txt" style="padding: 40px 8% 0;">Hi 👋</h2>
         <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap:25px; padding:30px 8%;">
-            <div class="card" onclick="openTool('calc')"><i class="fas fa-calculator"></i><h3>الآلة الحاسبة</h3><p>دقة وسرعة في الحساب</p></div>
-            <div class="card" onclick="alert('قريباً!')"><i class="fas fa-magic"></i><h3>أداة الصور</h3><p>تعديل احترافي قريباً</p></div>
+            <div class="card" onclick="openTool('calc')"><i class="fas fa-calculator"></i><h3 id="l-calc-t">Calculator</h3><p id="l-calc-d">Fast and accurate</p></div>
+            <div class="card" onclick="alert('Coming soon!')"><i class="fas fa-magic"></i><h3 id="l-img-t">Image Tool</h3><p id="l-img-d">Professional editing soon</p></div>
         </div>
     </div>
 
     <div id="calc-section" class="hidden" style="padding: 60px 5%;">
         <div class="calc-wrapper">
-            <button onclick="closeTool()" style="background:none; border:none; color:var(--p); cursor:pointer; margin-bottom:20px; font-weight:bold;"><i class="fas fa-arrow-right"></i> العودة للرئيسية</button>
+            <button onclick="closeTool()" id="l-back" style="background:none; border:none; color:var(--p); cursor:pointer; margin-bottom:20px; font-weight:bold;"><i class="fas fa-arrow-left"></i> Back</button>
             <div id="display" class="calc-screen">0</div>
             <div class="calc-grid">
                 <button class="calc-btn op-btn" onclick="clearScreen()" style="color:var(--a)">C</button>
                 <button class="calc-btn op-btn" onclick="backspace()">DEL</button>
                 <button class="calc-btn op-btn" onclick="add('/')">/</button>
                 <button class="calc-btn op-btn" onclick="add('*')">×</button>
-                
-                <button class="calc-btn" onclick="add('7')">7</button>
-                <button class="calc-btn" onclick="add('8')">8</button>
-                <button class="calc-btn" onclick="add('9')">9</button>
-                <button class="calc-btn op-btn" onclick="add('-')">-</button>
-                
-                <button class="calc-btn" onclick="add('4')">4</button>
-                <button class="calc-btn" onclick="add('5')">5</button>
-                <button class="calc-btn" onclick="add('6')">6</button>
-                <button class="calc-btn op-btn" onclick="add('+')">+</button>
-                
-                <button class="calc-btn" onclick="add('1')">1</button>
-                <button class="calc-btn" onclick="add('2')">2</button>
-                <button class="calc-btn" onclick="add('3')">3</button>
-                <button class="calc-btn" onclick="add('.')">.</button>
-                
-                <button class="calc-btn" onclick="add('0')">0</button>
-                <button class="calc-btn eq-btn" onclick="calc()">=</button>
+                <button class="calc-btn" onclick="add('7')">7</button><button class="calc-btn" onclick="add('8')">8</button><button class="calc-btn" onclick="add('9')">9</button><button class="calc-btn op-btn" onclick="add('-')">-</button>
+                <button class="calc-btn" onclick="add('4')">4</button><button class="calc-btn" onclick="add('5')">5</button><button class="calc-btn" onclick="add('6')">6</button><button class="calc-btn op-btn" onclick="add('+')">+</button>
+                <button class="calc-btn" onclick="add('1')">1</button><button class="calc-btn" onclick="add('2')">2</button><button class="calc-btn" onclick="add('3')">3</button><button class="calc-btn" onclick="add('.')">.</button>
+                <button class="calc-btn" onclick="add('0')">0</button><button class="calc-btn eq-btn" onclick="calc()">=</button>
             </div>
         </div>
     </div>
 
     <div id="sidebar" class="sidebar">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
-            <h3>Settings</h3>
+            <h3 id="l-set">Settings</h3>
             <i class="fas fa-times" onclick="toggleMenu()" style="cursor:pointer; color:var(--a)"></i>
         </div>
         <button class="btn-theme" onclick="setTheme('light')"><i class="fas fa-sun"></i> Light Mode</button>
         <button class="btn-theme" onclick="setTheme('dark')"><i class="fas fa-moon"></i> Dark Mode</button>
-        <button onclick="logout()" style="width:100%; margin-top:50px; padding:15px; background:var(--a); color:#fff; border:none; border-radius:12px; cursor:pointer; font-weight:bold;">تسجيل الخروج</button>
+        <hr style="border:0; border-top:1px solid var(--card-border); margin:20px 0;">
+        <button class="btn-theme" onclick="setLang('en')">English</button>
+        <button class="btn-theme" onclick="setLang('ar')">العربية</button>
+        <button onclick="logout()" id="l-out" style="width:100%; margin-top:30px; padding:15px; background:var(--a); color:#fff; border:none; border-radius:12px; cursor:pointer; font-weight:bold;">Logout</button>
     </div>
 
     <script>
-        // حفظ المستخدم
+        const translations = {
+            en: { l_hello: "Hello 👋", l_enter: "Enter", l_calc_t: "Calculator", l_calc_d: "Fast and accurate", l_img_t: "Image Tool", l_img_d: "Professional editing soon", l_back: "Back", l_set: "Settings", l_out: "Logout", l_place: "Please enter your name" },
+            ar: { l_hello: "أهلاً 👋", l_enter: "دخول", l_calc_t: "الآلة الحاسبة", l_calc_d: "دقة وسرعة في الحساب", l_img_t: "أداة الصور", l_img_d: "تعديل احترافي قريباً", l_back: "العودة", l_set: "الإعدادات", l_out: "تسجيل الخروج", l_place: "من فضلك أدخل اسمك" }
+        };
+
+        function setLang(lang) {
+            localStorage.setItem('lang', lang);
+            const t = translations[lang];
+            document.getElementById('html-tag').lang = lang;
+            document.getElementById('html-tag').dir = (lang === 'ar' ? 'rtl' : 'ltr');
+            document.getElementById('l-hello').innerText = t.l_hello;
+            document.getElementById('l-enter').innerText = t.l_enter;
+            document.getElementById('l-calc-t').innerText = t.l_calc_t;
+            document.getElementById('l-calc-d').innerText = t.l_calc_d;
+            document.getElementById('l-img-t').innerText = t.l_img_t;
+            document.getElementById('l-img-d').innerText = t.l_img_d;
+            document.getElementById('l-back').innerHTML = `<i class="fas fa-arrow-${lang === 'ar' ? 'right' : 'left'}"></i> ${t.l_back}`;
+            document.getElementById('l-set').innerText = t.l_set;
+            document.getElementById('l-out').innerText = t.l_out;
+            document.getElementById('user-name-field').placeholder = t.l_place;
+            updateWelcome();
+        }
+
+        function updateWelcome() {
+            const user = localStorage.getItem('retag_name');
+            const lang = localStorage.getItem('lang') || 'en';
+            if(user) document.getElementById('welcome-txt').innerText = (lang === 'ar' ? "مرحباً " : "Hi ") + user + " 👋";
+        }
+
         function saveUser() {
             const name = document.getElementById('user-name-field').value.trim();
-            if(name) {
-                localStorage.setItem('retag_name', name);
-                location.reload();
-            } else { alert("Please enter your name!"); }
+            if(name) { localStorage.setItem('retag_name', name); location.reload(); }
         }
 
         function logout() { localStorage.clear(); location.reload(); }
         function toggleMenu() { document.getElementById('sidebar').classList.toggle('active'); }
         function setTheme(t) { document.getElementById('html-tag').setAttribute('data-theme', t); localStorage.setItem('theme', t); }
+        function openTool(tool) { document.getElementById('main-dash').classList.add('hidden'); if(tool === 'calc') document.getElementById('calc-section').classList.remove('hidden'); }
+        function closeTool() { document.getElementById('calc-section').classList.add('hidden'); document.getElementById('main-dash').classList.remove('hidden'); }
 
-        function openTool(tool) {
-            document.getElementById('main-dash').classList.add('hidden');
-            if(tool === 'calc') document.getElementById('calc-section').classList.remove('hidden');
-        }
-
-        function closeTool() {
-            document.getElementById('calc-section').classList.add('hidden');
-            document.getElementById('main-dash').classList.remove('hidden');
-        }
-
-        // منطق الآلة الحاسبة
         let currentInput = "";
         const screen = document.getElementById('display');
-
-        function add(val) {
-            currentInput += val;
-            screen.innerText = currentInput;
-        }
-
-        function clearScreen() {
-            currentInput = "";
-            screen.innerText = "0";
-        }
-
-        function backspace() {
-            currentInput = currentInput.slice(0, -1);
-            screen.innerText = currentInput || "0";
-        }
-
-        function calc() {
-            try {
-                currentInput = eval(currentInput).toString();
-                screen.innerText = currentInput;
-            } catch {
-                alert("Math error");
-                clearScreen();
-            }
-        }
+        function add(val) { currentInput += val; screen.innerText = currentInput; }
+        function clearScreen() { currentInput = ""; screen.innerText = "0"; }
+        function backspace() { currentInput = currentInput.slice(0, -1); screen.innerText = currentInput || "0"; }
+        function calc() { try { currentInput = eval(currentInput).toString(); screen.innerText = currentInput; } catch { alert("Error"); clearScreen(); } }
 
         window.onload = () => {
             setTheme(localStorage.getItem('theme') || 'dark');
+            setLang(localStorage.getItem('lang') || 'en');
             const user = localStorage.getItem('retag_name');
             if(user) {
                 document.getElementById('login-page').classList.add('hidden');
                 document.getElementById('main-dash').classList.remove('hidden');
-                document.getElementById('welcome-txt').innerText = `Hi ${user} 👋`;
             }
         };
     </script>
